@@ -70,6 +70,12 @@ app.get('/api/dashboard', jwtMW, (req, res) => {
     });
 });
 
+app.get('/api/settings', jwtMW, (req, res) => {
+    res.json({
+        success: true,
+        myContent: 'This is the settings page'
+    });
+});
 
 app.get('/api/prices', jwtMW, (req, res) => {
     res.json({
