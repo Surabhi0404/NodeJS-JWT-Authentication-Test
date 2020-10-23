@@ -66,6 +66,9 @@
                 if (res && res.data && res.data.success) {
                     document.querySelector('h1.row').innerHTML = 'Dashboard';
                     document.querySelector('main').innerHTML = res.data.myContent;
+
+                    window.history.pushState("http://localhost:3000", "Sample Title", "/api/dashboard");
+
                 }
             });
         }
@@ -80,6 +83,8 @@
                 if (res && res.data && res.data.success) {
                     document.querySelector('h1.row').innerHTML = 'Settings';
                     document.querySelector('main').innerHTML = res.data.myContent;
+                    
+                    window.history.pushState("http://localhost:3000", "Sample Title", "/api/settings");
                 }
             });
         }

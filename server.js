@@ -17,7 +17,9 @@ const exjwt = require('express-jwt');
 
 const jwtMW = exjwt({
     secret: secretKey,
-    algorithms: ['HS256']
+    algorithms: ['HS256'],
+    isRevoked: isRevokedCallback
+
 })
 
 let users = [
@@ -41,39 +43,51 @@ app.use((req, res, next) => {
     next();
 })
 
-app.post('/api/login', (req, res) => {
-    const {username, password} = req.body;
-    
-    for(let user of users) {
-        if(username == user.username && password == user.password) {
-            let token = jwt.sign({ id: user.id, username: user.username}, secretKey, {expiresIn: '7d'});
+var isRevokedCallback = function(req, payload, done){
+    var issuer = payload.iss;
+    var tokenId = payload.jti;
+  
+    data.getRevokedToken(issuer, tokenId, function(err, token){
+      if (err) { return done(err); }
+      return done(null, !!token);
+    });
+  };
+
+app.post('/api/login',(req,res)=>{
+    const {username,password} = req.body; 
+
+    for(let user of users)
+    {
+        if(username == user.username && password == user.password)
+        {
+            let token = jwt.sign({id:user.id,username:user.username},secretKey,{expiresIn: 180});
             res.json({
                 success: true,
-                err: null,
+                err:null,
                 token
             });
             break;
-        }else {
-            res.status(401).json({
-                success: false,
-                token: null,
-                err: 'Username or password is incorrect'
-            });
-        }
+        }   
     }
-});
+
+    res.status(401).json({
+        success:false,
+        token:null,
+        err: 'Username or Password is incorrect'
+    });
+}); 
 
 app.get('/api/dashboard', jwtMW, (req, res) => {
     res.json({
         success: true,
-        myContent: 'Secret content that only logged in people can see!!!'
+        myContent: 'Secret content that only logged in people can see!!!',
     });
 });
 
 app.get('/api/settings', jwtMW, (req, res) => {
     res.json({
         success: true,
-        myContent: 'This is the settings page'
+        myContent: 'This is the settings page',
     });
 });
 
