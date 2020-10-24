@@ -64,10 +64,11 @@
                 }
             }).then(res => {
                 if (res && res.data && res.data.success) {
+                    tokenExpire();
                     document.querySelector('h1.row').innerHTML = 'Dashboard';
                     document.querySelector('main').innerHTML = res.data.myContent;
 
-                    window.history.pushState("http://localhost:3000", "Sample Title", "/api/dashboard");
+                    history.pushState(null, 'Settings', '/api/dashboard');
 
                 }
             });
@@ -81,10 +82,10 @@
                 }
             }).then(res => {
                 if (res && res.data && res.data.success) {
+                    tokenExpire();
                     document.querySelector('h1.row').innerHTML = 'Settings';
-                    document.querySelector('main').innerHTML = res.data.myContent;
-                    
-                    window.history.pushState("http://localhost:3000", "Sample Title", "/api/settings");
+                    document.querySelector('main').innerHTML = res.data.myContent;                    
+                    history.pushState(null,'Settings','api/settings');
                 }
             });
         }
@@ -97,6 +98,19 @@
         }
 
        // onLoad();
+
+       function tokenExpire(){
+            const token = localStorage.getItem('jwt');
+            const currToken = token.split('.')[1];
+            var key = JSON.parse(window.atob(currToken));
+            var keyData = new Date(key.exp*1000);
+            if(Date.now()>=keyData){
+                localStorage.removeItem('jwt');
+                window.location.href = '/';
+            }
+            var timeOut = key.exp*1000 - new Date();
+            setTimeout(function(){tokenExpire()}, timeOut);
+        }  
     </script>
 
 

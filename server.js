@@ -60,7 +60,7 @@ app.post('/api/login',(req,res)=>{
     {
         if(username == user.username && password == user.password)
         {
-            let token = jwt.sign({id:user.id,username:user.username},secretKey,{expiresIn: 180});
+            let token = jwt.sign({id:user.id,username:user.username},secretKey,{expiresIn: 10});
             res.json({
                 success: true,
                 err:null,
@@ -109,7 +109,8 @@ app.use(function (err, req, res, next){
             officialError:err,
             err: 'Username or password is incorrect 2'
         });
-    }else {
+    }    
+    else {
         next(err);
     }
 });
